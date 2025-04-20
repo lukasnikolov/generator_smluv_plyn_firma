@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Generátor smlouvy - Firma (Plyn)</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light p-4">
+<div class="container">
+  <h1 class="mb-4">Smlouva o dodávce plynu – Firma</h1>
+  <form id="contractForm">
+    <div class="row mb-3">
+      <div class="col"><label class="form-label">Název firmy</label><input type="text" class="form-control" name="firma" required></div>
+      <div class="col"><label class="form-label">IČO</label><input type="text" class="form-control" name="ico" required></div>
+    </div>
+    <div class="row mb-3">
+      <div class="col"><label class="form-label">Číslo smlouvy</label><input type="text" class="form-control" name="cislo_smlouvy"></div>
+      <div class="col"><label class="form-label">Číslo partnera</label><input type="text" class="form-control" name="cislo_partnera"></div>
+    </div>
+    <div class="mb-3"><label class="form-label">E-mail</label><input type="email" class="form-control" name="email"></div>
+    <div class="mb-3"><label class="form-label">Telefon</label><input type="text" class="form-control" name="telefon"></div>
+    <div class="mb-3"><label class="form-label">Způsob odesílání faktur</label>
+      <select class="form-select" name="zpusob_odesilani">
+        <option value="">-- Vyberte --</option>
+        <option>E-mailem</option><option>Poštou</option><option>Datovou schránkou</option>
+      </select>
+    </div>
+    <div class="row mb-3">
+      <div class="col"><label class="form-label">Platba – Faktury</label>
+        <select class="form-select" name="platby_faktury">
+          <option value="">-- Vyberte --</option>
+          <option>Převodem</option><option>Inkaso</option><option>SIPO</option><option>Složenka</option>
+        </select>
+      </div>
+      <div class="col"><label class="form-label">Platba – Zálohy</label>
+        <select class="form-select" name="platby_zalohy">
+          <option value="">-- Vyberte --</option>
+          <option>Převodem</option><option>Inkaso</option><option>SIPO</option><option>Složenka</option>
+        </select>
+      </div>
+    </div>
+    <div class="mb-3"><label class="form-label">Číslo účtu</label><input type="text" class="form-control" name="cislo_uctu"></div>
+    <div class="row mb-3">
+      <div class="col"><label class="form-label">Zahájení dodávek</label><input type="text" class="form-control" name="zahajeni_dodavek" placeholder="DD.MM.RRRR"></div>
+      <div class="col"><label class="form-label">Datum prolongace</label><input type="text" class="form-control" name="prolongace" placeholder="DD.MM.RRRR"></div>
+    </div>
+    <div class="mb-3"><label class="form-label">EIC</label><input type="text" class="form-control" name="ean"></div>
+
+    <h5 class="mt-4">Adresa sídla</h5>
+    <div class="mb-3"><label class="form-label">Ulice</label><input type="text" class="form-control" name="ulice_sidlo"></div>
+    <div class="row mb-3">
+      <div class="col"><label class="form-label">Město</label><input type="text" class="form-control" name="mesto_sidlo"></div>
+      <div class="col"><label class="form-label">PSČ</label><input type="text" class="form-control" name="psc_sidlo"></div>
+    </div>
+
+    <h5 class="mt-4">Odběrné místo</h5>
+    <div class="mb-3"><label class="form-label">Ulice</label><input type="text" class="form-control" name="ulice_odber"></div>
+    <div class="row mb-3">
+      <div class="col"><label class="form-label">Město</label><input type="text" class="form-control" name="mesto_odber"></div>
+      <div class="col"><label class="form-label">PSČ</label><input type="text" class="form-control" name="psc_odber"></div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Vygenerovat smlouvu</button>
+  </form>
+</div>
+<script>
+document.getElementById('contractForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  const formData = new FormData(this);
+  const jsonData = {};
+  formData.forEach((value, key) => jsonData[key] = value);
+
+  const response = await fetch("https://generator-smlouvy-firma-plyn.onrender.com/api/generate", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(jsonData)
+  });
+
+  if (!response.ok) return alert("Chyba při generování dokumentu.");
+  const blob = await response.blob();
+  const downloadUrl = window.URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = downloadUrl;
+  link.download = "smlouva_firma_plyn.docx";
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+});
+</script>
+</body>
+</html>
